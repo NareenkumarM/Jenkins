@@ -27,6 +27,6 @@ pipeline {
         }
 	    stage('Searching'){
 		    steps{
-			    echo 
+			    echo 'This is the next sample for the project'
     }
 }
