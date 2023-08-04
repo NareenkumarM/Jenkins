@@ -1,29 +1,28 @@
-// Declarative pipelines must be enclosed with a "pipeline" directive.
-pipeline {
-    // This line is required for declarative pipelines. Just keep it here.
-    agent any
 
-    // This section contains environment variables which are available for use in the
-    // pipeline's stages.
-    environment {
-	    region = "us-east-1"
-        docker_repo_uri = ""
-		task_def_arn = ""
-        cluster = ""
-        exec_role_arn = ""
+// The script triggers PayloadJob on every node.
+// It uses Node and Label Parameter plugin to pass the job name to the payload job.
+// The code will require approval of several Jenkins classes in the Script Security mode
+def branches = [:]
+def names = nodeNames()
+for (int i=0; i<names.size(); ++i) {
+  def nodeName = names[i];
+  // Into each branch we put the pipeline code we want to execute
+  branches["node_" + nodeName] = {
+    node(nodeName) {
+      echo "Triggering on " + nodeName
+      build job: 'PayloadJob', parameters: [
+              new org.jvnet.jenkins.plugins.nodelabelparameter.NodeParameterValue
+                  ("TARGET_NODE", "description", nodeName)
+          ]
     }
-    
-    // Here you can define one or more stages for your pipeline.
-    // Each stage can execute one or more steps.
-    stages {
-        // This is a stage.
-        stage('Example') {
-            steps {
-                // This is a step of type "echo". It doesn't do much, only prints some text.
-                echo 'This is a Jenkins Project from Nareenkumar Manohar'
-                // For a list of all the supported steps, take a look at
-                // https://jenkins.io/doc/pipeline/steps/ .
-            }
-        }
-    }
+  }
+}
+
+// Now we trigger all branches
+parallel branches
+
+// This method collects a list of Node names from the current Jenkins instance
+@NonCPS
+def nodeNames() {
+  return jenkins.model.Jenkins.instance.nodes.collect { node -> node.name }
 }
