@@ -32,7 +32,7 @@ pipeline {
 	    }
 	    stage('Test'){
 		    steps{
-			    sh npm run java:run
+			    sh 'javac app.java'
 			    echo 'Java Application Runned Successfully'
 		    }
 	    }
