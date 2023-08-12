@@ -30,5 +30,9 @@ pipeline {
 			    echo 'This is the next sample for the project'
 		    }
 	    }
+	    stage('Test'){
+		    steps{
+			    sh npm run java:run
+			    echo 'Java Application Runned Successfully'
     }
 }
