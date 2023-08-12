@@ -36,11 +36,6 @@ pipeline {
 			    echo 'Java Application Runned Successfully'
 		    }
 	    }
-	    stage('Build'){
-		    steps{
-			    sh npm run build
-			    echo 'Build Successfully Finished'
-		    }
-	    }
+	  
     }
 }
